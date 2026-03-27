@@ -1,0 +1,9 @@
+<Configuration>
+<MappedFolders>
+  <MappedFolder>
+    <HostFolder>C:\sandbox_share</HostFolder>
+    <ReadOnly>false</ReadOnly>
+  </MappedFolder>
+</MappedFolders>
+<VGpu>Enable</VGpu>
+</Configuration>

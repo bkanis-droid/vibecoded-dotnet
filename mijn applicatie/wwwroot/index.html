@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medische Klantenmanagement Systeem</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏥 Medische Klantenmanagement</h1>
+            <p>Beheer patiënten, afspraken en medische geschiedenis</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" onclick="showTab('patients')">Patiënten</button>
+            <button class="nav-btn" onclick="showTab('appointments')">Afspraken</button>
+            <button class="nav-btn" onclick="showTab('history')">Medische Geschiedenis</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Patiënten Tab -->
+            <section id="patients" class="tab active">
+                <div class="section-header">
+                    <h2>Patiëntenbeheer</h2>
+                    <button class="btn btn-primary" onclick="openPatientModal()">+ Nieuwe Patiënt</button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="patientSearch" placeholder="Zoek patiënten..." onkeyup="searchPatients()">
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Voornaam</th>
+                                <th>Achternaam</th>
+                                <th>Email</th>
+                                <th>Telefoonnummer</th>
+                                <th>Geboortedatum</th>
+                                <th>Acties</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientTableBody">
+                            <tr class="loading">
+                                <td colspan="7">Laden...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Afspraken Tab -->
+            <section id="appointments" class="tab">
+                <div class="section-header">
+                    <h2>Afsprakenbeheer</h2>
+                    <button class="btn btn-primary" onclick="openAppointmentModal()">+ Nieuwe Afspraak</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patiënt ID</th>
+                                <th>Datum</th>
+                                <th>Reden</th>
+                                <th>Status</th>
+                                <th>Acties</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentTableBody">
+                            <tr class="loading">
+                                <td colspan="6">Laden...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Medische Geschiedenis Tab -->
+            <section id="history" class="tab">
+                <div class="section-header">
+                    <h2>Medische Geschiedenis</h2>
+                    <button class="btn btn-primary" onclick="openHistoryModal()">+ Nieuwe Record</button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="number" id="historyPatientId" placeholder="Patiënt ID..." onchange="loadPatientHistory()">
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patiënt ID</th>
+                                <th>Bezoekdatum</th>
+                                <th>Diagnose</th>
+                                <th>Medicatie</th>
+                                <th>Acties</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr class="loading">
+                                <td colspan="6">Voer patiënt ID in</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Patient Modal -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePatientModal()">&times;</span>
+            <h2 id="patientModalTitle">Nieuwe Patiënt</h2>
+            <form id="patientForm" onsubmit="savePatient(event)">
+                <input type="hidden" id="patientId">
+                
+                <div class="form-group">
+                    <label>Voornaam *</label>
+                    <input type="text" id="firstName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Achternaam *</label>
+                    <input type="text" id="lastName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefoonnummer *</label>
+                    <input type="tel" id="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Geboortedatum *</label>
+                    <input type="date" id="dob" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Geslacht</label>
+                    <select id="gender">
+                        <option value="">Selecteer...</option>
+                        <option value="M">Man</option>
+                        <option value="F">Vrouw</option>
+                        <option value="O">Overig</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Adres</label>
+                    <input type="text" id="address">
+                </div>
+
+                <div class="form-group">
+                    <label>Stad</label>
+                    <input type="text" id="city">
+                </div>
+
+                <div class="form-group">
+                    <label>Postcode</label>
+                    <input type="text" id="postalCode">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Opslaan</button>
+                    <button type="button" class="btn btn-secondary" onclick="closePatientModal()">Annuleren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAppointmentModal()">&times;</span>
+            <h2>Nieuwe Afspraak</h2>
+            <form id="appointmentForm" onsubmit="saveAppointment(event)">
+                <input type="hidden" id="appointmentId">
+                
+                <div class="form-group">
+                    <label>Patiënt ID *</label>
+                    <input type="number" id="appointmentPatientId" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Datum en Tijd *</label>
+                    <input type="datetime-local" id="appointmentDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Reden</label>
+                    <textarea id="appointmentReason"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="appointmentStatus">
+                        <option value="Scheduled">Ingepland</option>
+                        <option value="In Progress">Bezig</option>
+                        <option value="Completed">Voltooid</option>
+                        <option value="Cancelled">Geannuleerd</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Opslaan</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAppointmentModal()">Annuleren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <h2>Nieuw Medisch Record</h2>
+            <form id="historyForm" onsubmit="saveHistory(event)">
+                <div class="form-group">
+                    <label>Patiënt ID *</label>
+                    <input type="number" id="historyPatientIdInput" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Bezoekdatum *</label>
+                    <input type="date" id="visitDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Diagnose</label>
+                    <textarea id="diagnosis"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Behandeling</label>
+                    <textarea id="treatment"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Symptomen</label>
+                    <textarea id="symptoms"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Medicatie</label>
+                    <textarea id="medications"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Opslaan</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeHistoryModal()">Annuleren</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <div id="alert" class="alert"></div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
